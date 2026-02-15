@@ -1,18 +1,17 @@
 import { Scene } from 'phaser';
 
-export class Game extends Scene
-{
+import * as sim from '../sim';
+
+export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     msg_text : Phaser.GameObjects.Text;
 
-    constructor ()
-    {
+    constructor() {
         super('Game');
     }
 
-    create ()
-    {
+    public create() {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00ff00);
 
@@ -30,6 +29,17 @@ export class Game extends Scene
 
             this.scene.start('GameOver');
 
+        });
+
+        const state = sim.defaultInitialState;
+        // Update the state every second with an empty action, which will cause the simulation to progress.
+        const simTimer = this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                sim.handleAction(state, { type: 'tick' });
+                console.log(state);
+            },
+            loop: true,
         });
     }
 }
